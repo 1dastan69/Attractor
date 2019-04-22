@@ -1,0 +1,9 @@
+
+INSERT INTO University (id, name, status) VALUES (63 ,'RolUniver', 'Big');
+
+INSERT INTO Department (id, name, universityId) VALUES (124, 'math', 123412);
+
+INSERT INTO Student (id, fullname, departmentId, universityId) VALUES (102, 'Dastan', 123, 62);
+
+
+

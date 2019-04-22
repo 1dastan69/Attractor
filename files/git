@@ -1,0 +1,11 @@
+git init
+git remote add origin <HTTP link repo>
+----------------------------------
+git clone <HTTP link>
+----------------------------------
+git add .
+git commit -m "<Commit name>"
+git push origin master
+
+-----------------------------
+git pull origin master

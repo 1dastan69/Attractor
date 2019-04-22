@@ -1,0 +1,237 @@
+
+DEFAULT_MIN = 0
+entity User {
+	FirstName String maxlength(50) required,
+    LastName String maxlength(50) required,
+    Birthday LocalDate,
+    Gender GenderType,
+    Email String maxlength(50) required,
+    Phone Integer maxlength(12) required,
+    CompanyName String maxlength(255),
+    AccountRegistrationDate LocalDate,
+    AccountClosureDate LocalDate,
+    LastVisit LocalDate
+}  
+
+entity Services {
+    ServiceName String maxlength(100) required
+}
+
+entity UserDigitalContent {
+    UserDigitalContentURL String maxlength(100),
+   	Type ContentType
+}
+entity Contacts {
+	Value String maxlength(50),
+	Type ContactType,
+    Primary Boolean
+}
+
+entity Address {
+	Type AddressType required,
+	StreetAddress String maxlength(150) required,
+	PostalCode String maxlength(6) required,
+	Location String maxlength(20) required, //City or Village
+	StateProvince String maxlength(20) required,
+    Country String maxlength(20) required
+}
+
+entity Review {
+    ReviewTitle String maxlength(100) required,
+    ReviewDetails String maxlength(1000) required,
+    ReviewDate LocalDate required,
+    ReviewTime ZonedDateTime required,
+    ObjectId Integer required,
+    ObjectType ReviewType required,
+    ProductName String maxlength(100),
+    Rating Integer min(1) max(5)
+}
+
+enum ReviewType{
+	Offer, Order, User
+}
+
+entity Search {
+    UserId Integer required,
+    SearchQuery String required,
+    SelectedURL String required
+}  
+
+entity Conversation {
+    User1Id Integer required,
+    User1Name String maxlength(100) required,
+    User2Id Integer required,
+    User2Name String maxlength(100) required,
+	Title String maxlength(50) required,
+	CreatedDate LocalDate required,
+    CreatedTime ZonedDateTime required
+}    
+    
+entity Message {
+ 	Message TextBlob required,
+ 	MessageDate LocalDate required,
+  	MessageTime ZonedDateTime required,
+    State MessageState required
+}
+
+enum MessageState{
+	Delivered, Seen, NotDelivered
+}
+
+entity Product {
+    ProductName String maxlength(100) required,
+    ProductDescription TextBlob,
+    Active Boolean, //скрывать неактивные продукты
+    Unit UnitsType
+}
+
+entity ProductImage {
+	ContentId Integer required, //ссылка на ресурс
+    ViewOrder Integer required
+}
+
+entity Category {
+    CategoryName String maxlength(100) required,
+    Description TextBlob
+}
+
+entity Offer {
+    Description String, 
+	StartDate LocalDate required,
+    FinishDate LocalDate required,
+    State OfferState required, //draft or not draft
+    Volume Double min(DEFAULT_MIN) required,
+    Unit UnitsType required,
+    Price Double min(DEFAULT_MIN) required,
+    Currency CCY required,
+	StreetAddress String maxlength(150),
+	PostalCode String maxlength(6),
+	Location String maxlength(20) required,
+	StateProvince String maxlength(20) required,
+    Country String maxlength(20),
+    CertificateNumber String maxlength(50),
+    CertDateStart LocalDate,
+    CertDateFinish LocalDate,
+    Rating Integer
+}
+
+enum OfferState{
+	Draft, Active, Closed, Cancelled
+}
+
+entity Likes {
+	UserId Integer required,
+    OfferId Integer required
+}
+
+entity OfferDigitalContent {
+  	OfferDigitalContentURL String maxlength(100) required,
+   	Type ContentType required
+}
+
+entity Order {
+    Description String, 
+	StartDate LocalDate required,
+    FinishDate LocalDate required,
+    State OrderState required, //draft or not draft
+    Volume Double min(DEFAULT_MIN) required,
+    Unit UnitsType required,
+    Price Double min(DEFAULT_MIN) required,
+    Currency CCY required required,
+	StreetAddress String maxlength(150),
+	PostalCode String maxlength(6),
+	Location String maxlength(20) required,
+	StateProvince String maxlength(20) required,
+    Country String maxlength(20),
+    Certification Boolean
+}  
+
+enum OrderState{
+	Draft, Active, Closed, Cancelled
+}
+
+entity Deal {
+    BuyerId Integer required,
+	BuyerName String maxlength(100) required,
+    SellerId Integer required,
+    SellerName String maxlength(100) required,
+    State DealState required,
+    Volume Double min(DEFAULT_MIN) required,
+    Unit UnitsType required,
+    Price Double min(DEFAULT_MIN) required,
+    Currency CCY required,
+    StreetAddress String maxlength(150),
+	PostalCode String maxlength(6),
+	Location String maxlength(20) required,
+	StateProvince String maxlength(20) required,
+    Country String maxlength(20),
+    Shipment ShipmentType
+} 
+
+enum DealState{
+	Active, Pending, Approved, Cancelled, Closed
+}
+
+enum ShipmentType{
+	Pickup, Delivery
+} 
+
+enum CCY{
+	RUB, KGS, USD, EUR
+}
+
+enum UnitsType{
+	Tons, Kilos, Units, Liters
+}
+// defining multiple OneToMany relationships with comments
+
+enum ContentType {
+    Image, Video
+}
+enum AddressType {
+	Primary, Billing, Shipping, Postal
+}
+
+enum ContactType {
+    Email, Phone, Whatsup, Fax, Other
+}
+
+enum GenderType {
+Female,
+Male
+}
+
+relationship ManyToMany {
+    User{services} to Services
+    User{userdigitalcontent} to UserDigitalContent
+    Offer{likes} to Likes
+    Offer{offerdigitalcontent} to OfferDigitalContent
+}
+
+relationship OneToMany {
+	User{address} to Address,
+	User{contacts} to Contacts,
+    User{rewievs} to Review,
+	Category{product} to Product,
+    Category{parentCategory} to Category,
+    Product{image} to ProductImage,
+	Conversation to Message,
+    Product{ProdustOffers} to Offer,
+    Category{CategoryOffers} to Offer,
+    User{UserOffers} to  Offer,
+    Product{ProdustOrder} to Order,
+    Category{CategoryOrder} to Order,
+    User{UserOrder} to Order,
+    Offer(OfferDeal) to Deal,
+    Order(OrderDeal) to Deal,
+}
+// Use Data Transfert Objects (DTO)
+// dto * with mapstruct
+
+paginate * with pager
+
+// Set service options to all except few
+service all with serviceImpl
+
+// Set an angular suffix
+// angularSuffix * with mySuffix

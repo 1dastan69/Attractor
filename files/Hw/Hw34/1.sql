@@ -1,0 +1,1 @@
+create database attractor_school;

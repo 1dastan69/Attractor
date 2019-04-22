@@ -1,0 +1,5 @@
+package com.attractor.testApi.controller;
+
+public class HomeController {
+
+}
